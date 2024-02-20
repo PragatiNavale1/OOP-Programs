@@ -1,0 +1,107 @@
+#include <iostream>
+#include<fstream>
+#include<string>
+#include<algorithm>
+
+using namespace std;
+
+class Student {
+private:
+    string name;
+    int rollNumber;
+    int oopMarks;
+    int dedcMarks;
+    int coaMarks;
+    int dmMarks;
+    int pythonMarks;
+    double averageMarks;
+
+public:
+    void setStudentData() {
+        cout << "Enter Student Name: ";
+        getline(cin, name);
+
+        cout << "Enter Roll Number: ";
+        cin >> rollNumber;
+
+        cout << "Enter Marks for OOP: ";
+        cin >> oopMarks;
+
+        cout << "Enter Marks for DEDC: ";
+        cin >> dedcMarks;
+
+        cout << "Enter Marks for COA: ";
+        cin >> coaMarks;
+
+        cout << "Enter Marks for DM: ";
+        cin >> dmMarks;
+
+        cout << "Enter Marks for Python: ";
+        cin >> pythonMarks;
+
+        // Consume the newline character left in the input buffer
+        cin.ignore();
+        
+        // Calculate average marks
+        averageMarks = (oopMarks + dedcMarks + coaMarks + dmMarks + pythonMarks) / 5.0;
+    }
+
+    double getAverageMarks() const {
+        return averageMarks;
+    }
+
+    void displayResult() const {
+        cout << "Student Name: " << name << "\n";
+        cout << "Roll Number: " << rollNumber << "\n";
+        cout << "Marks - OOP: " << oopMarks << ", DEDC: " << dedcMarks << ", COA: " << coaMarks
+             << ", DM: " << dmMarks << ", Python: " << pythonMarks << "\n";
+
+        cout << "Average Marks: " << averageMarks << "\n";
+        cout << "---------------------------\n";
+    }
+
+    void saveToFile(ofstream& outputFile) const {
+        // Save student data to the file
+        outputFile << "Student Name: " << name << "\n";
+        outputFile << "Roll Number: " << rollNumber << "\n";
+        outputFile << "Marks - OOP: " << oopMarks << ", DEDC: " << dedcMarks << ", COA: " << coaMarks
+                    << ", DM: " << dmMarks << ", Python: " << pythonMarks << "\n";
+        outputFile << "Average Marks: " << averageMarks << "\n";
+        outputFile << "---------------------------\n";
+    }
+
+    bool operator<(const Student& other) const {
+        // Compare students based on average marks for sorting
+        return averageMarks > other.averageMarks;
+    }
+};
+
+int main() {
+    const int numStudents = 5;
+    Student students[numStudents];
+
+    // Input student data and marks
+    for (int i = 0; i < numStudents; ++i) {
+        cout << "Enter data for student " << i + 1 << ":\n";
+        students[i].setStudentData();
+    }
+
+    // Sort students based on average marks in descending order
+    sort(students, students + numStudents);
+
+    // Display results rank-wise and save to file
+    ofstream outputFile("student_results.txt");
+    if (outputFile.is_open()) {
+        for (int i = 0; i < numStudents; ++i) {
+            cout << "Rank " << i + 1 << ":\n";
+            students[i].displayResult();
+            students[i].saveToFile(outputFile);
+        }
+        outputFile.close();
+        cout << "Results saved to 'student_results.txt'\n";
+    } else {
+        cout << "Error opening the file for writing.\n";
+    }
+
+    return 0;
+}
